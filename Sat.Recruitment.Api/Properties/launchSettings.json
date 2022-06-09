@@ -1,0 +1,23 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:65492",
+      "sslPort": 0
+    }
+  },
+  "profiles": {
+    "Sat.Recruitment.Web": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "RecruitmentDB": "Server=DESKTOP-42KK2JH; Database=Recruitment; Integrated Security=True;"
+      },
+      "applicationUrl": "http://localhost:5000"
+    }
+  }
+}
