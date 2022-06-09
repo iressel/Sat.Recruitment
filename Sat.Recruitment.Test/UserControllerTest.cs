@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sat.Recruitment.Api.Controllers;
+using Sat.Recruitment.Api.Extensions;
 using Sat.Recruitment.Global.Enums;
+using Sat.Recruitment.Global.Exceptions;
 using Sat.Recruitment.Global.Requests;
 using Sat.Recruitment.Global.Responses;
+using Sat.Recruitment.Services.AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -21,7 +25,14 @@ namespace Sat.Recruitment.Test
 
         public UserControllerTest()
         {
+            var services = new ServiceCollection();
+            services.AddAutoMapper(typeof(DomainProfile).Assembly);
+            services.AddDatabaseService();
+            services.AddApplicationServices();
 
+            var serviceProvider = services.BuildServiceProvider();
+
+            _userController = serviceProvider.GetService<UsersController>();
         }
 
         [Fact]
@@ -29,19 +40,15 @@ namespace Sat.Recruitment.Test
         {
             var response = await _userController.CreateUser(new UserRequest
             {
-                Name = "iressel",
-                Email = "ismainressel@gmail.com",
-                Address = "Harosteguy 225",
-                Phone = "+542920403645",
+                Name = "ismain",
+                Email = "iressel@gmail.com",
+                Address = "san juan 855",
+                Phone = "+542920483610",
                 UserType = UserType.Normal,
                 Money = 116
             });
 
             var okResult = response as ObjectResult;
-
-            Assert.NotNull(okResult);
-            Assert.True(okResult is ObjectResult);
-            Assert.IsType<UserRequest>(okResult.Value);
             Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
         }
 
@@ -51,28 +58,26 @@ namespace Sat.Recruitment.Test
             await _userController.CreateUser(new UserRequest
             {
                 Name = "fchavez",
-                Email = "fiorellapalacioschavez@gmail.com",
-                Address = "Harosteguy 225",
-                Phone = "+51981082583",
+                Email = "fchavez@gmail.com",
+                Address = "harosteguy 225",
+                Phone = "+542920626182",
                 UserType = UserType.Normal,
                 Money = 116
             });
 
-            var response = await _userController.CreateUser(new UserRequest
+            var user = new UserRequest
             {
                 Name = "mromero",
-                Email = "ismainressel@gmail.com",
+                Email = "fchavez@gmail.com",
                 Address = "calle 45 763/2",
                 Phone = "+542920403645",
                 UserType = UserType.Normal,
                 Money = 116
-            });
+            };
 
-            var result = response as ObjectResult;
+            var ex = await Assert.ThrowsAsync<AppBadRequestException>(() => _userController.CreateUser(user));
 
-            Assert.NotNull(result);
-            Assert.True(result is ObjectResult);
-            Assert.Equal(StatusCodes.Status500InternalServerError, result.StatusCode);
+            Assert.Contains($"There is already a user with", ex.Message);
         }
     }
 }

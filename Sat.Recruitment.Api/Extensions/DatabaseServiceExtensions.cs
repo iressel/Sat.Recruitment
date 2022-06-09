@@ -11,7 +11,7 @@ namespace Sat.Recruitment.Api.Extensions
 {
     public static class DatabaseServiceExtensions
     {
-        public static void AddDatabaseService(this IServiceCollection services, IConfiguration configuration)
+        public static void AddDatabaseService(this IServiceCollection services)
         {
             services
                 .AddEntityFrameworkSqlServer()
@@ -19,16 +19,10 @@ namespace Sat.Recruitment.Api.Extensions
             {
 
                 options.UseSqlServer(
-                    GetRecruitmentConnectionString(configuration),
+                    "Server=DESKTOP-42KK2JH; Database=Recruitment; Integrated Security=True;",
                     dbOptions => dbOptions.CommandTimeout((int)TimeSpan.FromMinutes(10).TotalSeconds)
                                           .MigrationsAssembly("Sat.Recruitment.Model"));
             });
-        }
-
-        public static string GetRecruitmentConnectionString(IConfiguration configuration)
-        {
-            var recruitmentDBConnectionStringKey = configuration.GetValue("Launch:EnvironmentVariables:DBConnectionString", "RecruitmentDB");
-            return Environment.GetEnvironmentVariable(recruitmentDBConnectionStringKey);
         }
     }
 }

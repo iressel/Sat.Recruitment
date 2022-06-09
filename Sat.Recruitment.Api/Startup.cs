@@ -33,7 +33,7 @@ namespace Sat.Recruitment.Api
             });
 
             services.AddAutoMapper(typeof(DomainProfile).Assembly);
-            services.AddDatabaseService(_configuration);
+            services.AddDatabaseService();
             services.AddApplicationServices();
             services.AddControllers();
             services.AddSwaggerGen();
