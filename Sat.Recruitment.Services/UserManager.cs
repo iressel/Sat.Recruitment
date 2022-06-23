@@ -28,7 +28,6 @@ namespace Sat.Recruitment.Services
 
         public async Task<UserResponse> CreateUser(UserRequest userRequest)
         {
-            userRequest.Money = _moneyManager.CalculateAmount(userRequest);
             var user = await _context.Users
                                      .FirstOrDefaultAsync(u => u.Id == userRequest.Id
                                                                ||u.Email == userRequest.Email
@@ -41,6 +40,8 @@ namespace Sat.Recruitment.Services
             {
                 throw new AppBadRequestException($"There is already a user with id: {user.Id} email: {user.Email} or phone: {user.Phone} or name: {user.Name} or address: {user.Address}");
             }
+
+            userRequest.Money = _moneyManager.CalculateAmount(userRequest);
 
             user = _mapper.Map<User>(userRequest);
             await _context.Users.AddAsync(user);
